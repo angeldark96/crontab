@@ -1,16 +1,16 @@
 <?php
 
-require_once '../Crontab/database/postgres_test_conexion.php';
+require_once '../Crontab/database/postgres_conexion.php';
 require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
 
 class getdata_scpv2Contactos_scpv3
 {
-    use conexionPostgres_QA, conexionTestPostgresdbscpv3;
+    use conexionPostgres, conexionTestPostgresdbscpv3;
 
     public function getDataContactoscpV2()
     {
         $query = "SELECT * FROM tunidadmineracontactos";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgres()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll();
         return $listArray;
@@ -71,18 +71,19 @@ class getdata_scpv2Contactos_scpv3
             endforeach;
 
             $data_insertada->execute(array(
-                'apaternocont' => 'abca',
-                'amaternocont' => 'abcb',
-                'nombrescont' => 'abcc',
+                'apaternocont' => ucwords(strtolower($scpv2["apaterno"])),
+                'amaternocont' => ucwords(strtolower($scpv2["amaterno"])),
+                'nombrescont' => ucwords(strtolower($scpv2["nombres"])),
                 't_cargo_idcarg' => $this->capturarCargo($scpv2["ccontactocargo"]),
-                'correocontac' => 'abce',
+                'correocontac' => strtolower($scpv2["email"]),
                 'fregistrocont' => $fecha_actual,
                 'estadocont' => 0,
                 'codmigracont' => $scpv2['cunidadmineracontacto']
             ));
             $cont1++;
         endforeach;
-        echo ($cont1);
+        echo($cont1.' '.'contactos insertados')."\n";
+        echo($cont.' '.'contactos actualizados');
     }
 
     public function capturarCargo($idcargo)

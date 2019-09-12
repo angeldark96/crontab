@@ -1,18 +1,18 @@
 <?php
 
-require_once '../Crontab/database/postgres_test_conexion.php';
+require_once '../Crontab/database/postgres_conexion.php';
 require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
 //require_once '../Crontab/database/pg_tblog_conexion.php';
 
 class getdata_scpv2UM_scpv3
 {
-    use conexionPostgres_QA, conexionTestPostgresdbscpv3;
+    use conexionPostgres, conexionTestPostgresdbscpv3;
 
     public function getDataDireccionescpV2()
     {
         // Direcciones d los clientes
         $query = "SELECT * FROM tpersonajuridicainformacionbasica ORDER BY cpersona";
-        $stmt = $this->conexionpdoPostgresTest_QA()->query($query);
+        $stmt = $this->conexionpdoPostgres()->query($query);
         $direccionesClientes = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array_push($direccionesClientes, $row['cpersona']);
@@ -22,7 +22,7 @@ class getdata_scpv2UM_scpv3
         // direcciones de las unidades Mineras
 
         $queryUM = "SELECT * FROM tunidadminera ORDER BY cunidadminera";
-        $stmtUM = $this->conexionpdoPostgresTest_QA()->query($queryUM);
+        $stmtUM = $this->conexionpdoPostgres()->query($queryUM);
         $direccionesUM = [];
         while ($row = $stmtUM->fetch(PDO::FETCH_ASSOC)) {
             array_push($direccionesUM, $row['cunidadminera']);
@@ -32,7 +32,7 @@ class getdata_scpv2UM_scpv3
         // Conseguir direcion, referencia, numero , pais , cubigeo del cliente
 
         $query = "SELECT * FROM tpersonadirecciones where cpersona in ($in_direccionesClientes)";
-        $pdo_test = $this->conexionpdoPostgresTest_QA()->query($query);
+        $pdo_test = $this->conexionpdoPostgres()->query($query);
 
         $direccionesfullCliente = [];
 
@@ -64,6 +64,10 @@ class getdata_scpv2UM_scpv3
         $datascpUMv2 = $this->getDataDireccionesUMcpV2();
 
         $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+        $cont = 0;
+        $cont1 = 0;
+        $cont2 = 0;
+        $cont3 = 0;
 
 
         $data_insertada = $conexionSCPv3->prepare("INSERT INTO scliente.t_direcciones ( tipodir,
@@ -97,6 +101,7 @@ class getdata_scpv2UM_scpv3
         foreach ($datascpv2 as $scpv2) :
             foreach ($datascpv3 as $scpv3) :
                 if ($scpv2['cpersona'] == $scpv3['codmigradirecciones']) {
+                    $cont++;
                     $data_actualizada->execute(array(
                         'tipodir'               => 1,
                         'direcciondir'          =>  ucwords(strtolower($scpv2["direccion"])),
@@ -119,13 +124,18 @@ class getdata_scpv2UM_scpv3
                 't_pais_idpais'         => $this->capturarPais($scpv2["cpais"]), // Ampliar el tamaño a 5  y que no se null para insertar la data
                 'codmigradirecciones'   => $scpv2['cpersona']
             ));
+            $cont1++;
 
         endforeach;
+
+        echo($cont1.' '.'Direcciones de Clientes insertados')."\n";
+        echo($cont.' '.'Direcciones de Clientes  actualizados')."\n";
 
 
         foreach ($datascpUMv2 as $scpv2UM) :
             foreach ($datascpv3 as $scpv3) :
                 if ($scpv2UM['cunidadminera'] == $scpv3['codmigradirecciones']) {
+                    $cont2++;
                     $data_actualizada->execute(array(
                         'tipodir'               => 2,
                         'direcciondir'          =>  ucwords(strtolower($scpv2UM["direccion"])),
@@ -148,8 +158,11 @@ class getdata_scpv2UM_scpv3
                 't_pais_idpais'         => $this->capturarPais($scpv2UM["cpais"]), // Ampliar el tamaño a 5  y que no se null para insertar la data
                 'codmigradirecciones'   => $scpv2UM['cunidadminera']
             ));
+            $cont3++;
 
         endforeach;
+        echo($cont3.' '.'Direcciones de U. Minera insertados')."\n";
+        echo($cont2.' '.'Direcciones de  U. Minera  actualizados');
 
 
     }
@@ -177,7 +190,7 @@ class getdata_scpv2UM_scpv3
     {
         // Conseguir direcion, referencia, numero , pais , cubigeo del cliente
         $queryUM = "SELECT * FROM tunidadminera ORDER BY cunidadminera";
-        $stmtUM = $this->conexionpdoPostgresTest_QA()->query($queryUM);
+        $stmtUM = $this->conexionpdoPostgres()->query($queryUM);
         $stmtUM->execute();
         $listArray = $stmtUM->fetchAll();
         //print_r($listArray);

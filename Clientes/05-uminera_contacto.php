@@ -1,17 +1,17 @@
 <?php
 
-require_once '../Crontab/database/postgres_test_conexion.php';
+require_once '../Crontab/database/postgres_conexion.php';
 require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
 //require_once '../Crontab/database/pg_tblog_conexion.php';
 
 class getdata_scpv2UM_scpv3
 {
-    use conexionPostgres_QA, conexionTestPostgresdbscpv3;
+    use conexionPostgres, conexionTestPostgresdbscpv3;
 
     public function getDataUnidadMineraContactoscpV2()
     {
         $query = "SELECT * FROM tunidadmineracontactos";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgres()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll();
         return $listArray;
@@ -67,7 +67,7 @@ class getdata_scpv2UM_scpv3
                 if ($scpv2['cunidadmineracontacto'] == $scpv3['codmigracontacto'] && $scpv2['cunidadminera'] == $scpv3['codmigrauminera']) {
                     $cont++;
                     $data_actualizada->execute(array(
-                        't_contactos_idcont'    => $this->capturarIdContacto( $scpv2["cunidadmineracontacto"]),
+                        't_contactos_idcont'    => $this->capturarIdContacto($scpv2["cunidadmineracontacto"]),
                         't_unidadminera_idum'   => $this->capturarIdUnidadMinera( $scpv2["cunidadminera"]),
                         'fregistroumcont'       => $fecha_actual,
                         'estadocontum'          => 0,
@@ -91,7 +91,8 @@ class getdata_scpv2UM_scpv3
 
             $cont1++;
         endforeach;
-        echo ($cont1);
+        echo($cont1.' '.'Contactos de U. Minera insertados')."\n";
+        echo($cont.' '.'Contactos de U. Minera  actualizados');
     }
 
     public function capturarIdContacto($idContacto)

@@ -1,12 +1,12 @@
 <?php
 
-require_once '../Crontab/database/postgres_test_conexion.php';
+require_once '../Crontab/database/postgres_conexion.php';
 require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
 //require_once '../Crontab/database/pg_tblog_conexion.php';
 
 class getdata_scpv2UM_scpv3
 {
-    use conexionPostgres_QA, conexionTestPostgresdbscpv3;
+    use conexionPostgres, conexionTestPostgresdbscpv3;
 
 
     public function getDataClientescpV3()
@@ -54,7 +54,6 @@ class getdata_scpv2UM_scpv3
                 if ($scpcv3['codmigracli'] == $scpdv3['codmigradirecciones']) {
                     $cont++;
                     $data_insertada->execute(array(
-
                         't_direcciones_iddir'   => $scpdv3["iddir"],
                         't_cliente_idcliente'   => $scpcv3["idcliente"]
                     ));
@@ -69,7 +68,8 @@ class getdata_scpv2UM_scpv3
 
             $cont1++;
         endforeach;
-        echo ($cont1);
+        echo($cont1.' '.'Direccion de Clientes insertados - dir_cliente')."\n";
+        echo($cont.' '.'Direccion de Clientes actualizados - dir_cliente');
     }
 }
 
