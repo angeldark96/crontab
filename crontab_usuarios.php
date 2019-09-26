@@ -13,7 +13,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     {
         // Data del flowdesk empleado a actualizar 
         $queryuser_fd = "select DISTINCT(LTRIM(RTRIM(emp.documento_empleado)))  as documento_empleado,emp.ape_paterno_empl, emp.ape_materno_empl,emp.nombre,
-        car.descripcion as cargo,scc.descripcion as centro_costo ,scc.codigo as codigo_sig,emp.email, emp.email_laboral,max(conn.id) as ultimocontrato,conn.fecha_fin_prog ,conn.id_tipo_contrato,conn.fecha_inicio,emp.id_nacionalidad_empl
+        car.descripcion as cargo,scc.descripcion as centro_costo ,LTRIM(RTRIM(scc.codigo)) as codigo_sig,emp.email, emp.email_laboral,max(conn.id) as ultimocontrato,conn.fecha_fin_prog ,conn.id_tipo_contrato,conn.fecha_inicio,emp.id_nacionalidad_empl
         from empleado emp
         left join (select * from rh_contrato con where con.fecha_fin_prog is null) conn on emp.id = conn.id_empleado
         left join subcentrocosto scc on conn.id_sub_centrocosto = scc.id
@@ -31,14 +31,13 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
         // Data del SCP
         $queryscp = "select distinct(trim(identificacion)) as documento_empleado from tpersona where ctipopersona = 'NAT'";
         $pdo = $this->conexionpdoPostgresTest_QA()->query($queryscp);
-        $pdoupdate_insert = $this->conexionpdoPostgresTest_QA();
-        $listArrayscp = $pdo->fetchAll(PDO::FETCH_OBJ);
-        $listArrayscp = array_column($listArrayscp, "documento_empleado");
+        $listArrayscp2 = $pdo->fetchAll(PDO::FETCH_OBJ);
+        $listArrayscp = array_column($listArrayscp2, "documento_empleado");
         //$listArrayscp = trim($listArrayscp);
 
         //print_r($listArrayscp);
 
-
+        $pdoupdate_insert = $this->conexionpdoPostgresTest_QA();
         $count = 0;
         $result_set = $pdoupdate_insert->prepare("UPDATE tpersona SET nombre = :nombre,
                                                                       identificacion = :identificacion,
@@ -47,19 +46,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                       ctipoidentificacion = :ctipoidentificacion
                                                                       WHERE identificacion = :identificacion ");
 
-        $result_set_insert = $pdoupdate_insert->prepare("INSERT INTO tpersona (nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion) 
-                                                         VALUES (:nombre,:identificacion,:ctipopersona,:abreviatura,:ctipoidentificacion)");
-
-        $tpersonaListadataadicional = $pdoupdate_insert->prepare("INSERT INTO tpersonadatosempleado (cpersona,carea,fingreso,estado,ctipocontrato,email,email_laboral) 
-                                                    VALUES (:cpersona,:carea,:fingreso,:estado,:ctipocontrato,:email,:email_laboral)");
         
         $tpersonaListadataadicional_update = $pdoupdate_insert->prepare("UPDATE tpersonadatosempleado SET cpersona = :cpersona,
                                                                                                           carea  = :carea,
                                                                                                           fingreso = :fingreso,
                                                                                                           estado   = :estado,
                                                                                                           ctipocontrato = :ctipocontrato,
-                                                                                                          email =:email,
-                                                                                                          email_laboral=:email_laboral
+                                                                                                          email = :email,
+                                                                                                          email_laboral= :email_laboral
 
                                                                                                          
                                                                                                         FROM (
@@ -68,9 +62,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                                                         where tp.cpersona = :cpersona
                                                                                                         ) AS subquery 
                                                                                                         WHERE tpersonadatosempleado.cpersona=subquery.cpersona");
-
-        $tpersonaListadataadicionalinforbasica = $pdoupdate_insert->prepare("INSERT INTO tpersonanaturalinformacionbasica (cpersona,apaterno,amaterno,nombres,esempleado,cnacionalidad) 
-                                                                          VALUES (:cpersona,:apaterno,:amaterno,:nombres,:esempleado,:cnacionalidad)");   
+  
                                                                           
         $tpersonaListadataadicionalinforbasica_update = $pdoupdate_insert->prepare("UPDATE tpersonanaturalinformacionbasica SET cpersona = :cpersona,
                                                                                                                 apaterno = :apaterno,
@@ -80,20 +72,31 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                                                                 cnacionalidad = :cnacionalidad
                                                                                                                
                                                                                                             FROM (
-                                                                                                            select tp.cpersona from tpersona tp
+                                                                                                            select  tp.cpersona from tpersona tp
                                                                                                             inner join tpersonadatosempleado tpde on tpde.cpersona = tp.cpersona
                                                                                                             where tp.cpersona = :cpersona
                                                                                                             ) AS subquery 
-                                                                                                            WHERE tpersonanaturalinformacionbasica.cpersona=subquery.cpersona");                                                                  
+                                                                                                            WHERE tpersonanaturalinformacionbasica.cpersona=subquery.cpersona"); 
+                                                                                                            
+                                                                                                            
+        
+                $result_set_insert = $pdoupdate_insert->prepare("INSERT INTO tpersona (nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion) 
+                                                                            VALUES (:nombre,:identificacion,:ctipopersona,:abreviatura,:ctipoidentificacion)");
+
+                $tpersonaListadataadicional = $pdoupdate_insert->prepare("INSERT INTO tpersonadatosempleado (cpersona,carea,fingreso,estado,ctipocontrato,email,email_laboral) 
+                                                                            VALUES (:cpersona,:carea,:fingreso,:estado,:ctipocontrato,:email,:email_laboral)");                                                                                                
+
+                $tpersonaListadataadicionalinforbasica = $pdoupdate_insert->prepare("INSERT INTO tpersonanaturalinformacionbasica (cpersona,apaterno,amaterno,nombres,esempleado,cnacionalidad) 
+                                                                            VALUES (:cpersona,:apaterno,:amaterno,:nombres,:esempleado,:cnacionalidad)"); 
 
         foreach ($userfd as $row) :
             if (in_array(intval($row["documento_empleado"]), $listArrayscp)) {
 
                 $result_set->execute(array(
-                    'nombre' =>  ucwords(strtolower($row["ape_paterno_empl"])).' '. ucwords(strtolower($row["ape_materno_empl"])).' '. ucwords(strtolower($row["nombre"])),
+                    'nombre' =>  ucwords(mb_strtolower($row["ape_paterno_empl"])).' '. ucwords(mb_strtolower($row["ape_materno_empl"])).' '. ucwords(mb_strtolower($row["nombre"])),
                     'ctipopersona'        => 'NAT', 
                     'ctipoidentificacion' => 2, 
-                    'abreviatura' => ($row["nombre"] ? explode(" ",ucwords(strtolower($row["nombre"])))[0] : '').' '.ucwords(strtolower($row["ape_paterno_empl"])),
+                    'abreviatura' => ($row["nombre"] ? explode(" ",ucwords(mb_strtolower($row["nombre"])))[0] : '').' '.ucwords(mb_strtolower($row["ape_paterno_empl"])),
                     'identificacion' => $row["documento_empleado"]
                 ));
 
@@ -119,17 +122,20 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
 
 
-               // echo $row["documento_empleado"].' '.$row["nombre"].' '.$row["ape_paterno_empl"]."\n";
+              //  echo $row["documento_empleado"].' '.$row["nombre"].' '.$row["ape_paterno_empl"].'----------------------------------------------'."\n";
 
                 continue;
-            } else {
-
+            } 
+       
+               
                 $result_set_insert->execute(array(
+                    'nombre'          => ucwords(mb_strtolower($row["ape_paterno_empl"])).' '. ucwords(mb_strtolower($row["ape_materno_empl"])).' '. ucwords(mb_strtolower($row["nombre"])),
                     'identificacion'      => $row["documento_empleado"],
                     'ctipopersona'        => 'NAT', 
-                    'ctipoidentificacion' => 2, 
-                    'abreviatura' => ($row["nombre"] ? explode(" ",ucwords(strtolower($row["nombre"])))[0] : '').' '.ucwords(strtolower($row["ape_paterno_empl"])),
-                    'nombre'          =>ucwords(strtolower($row["ape_paterno_empl"])).' '. ucwords(strtolower($row["ape_materno_empl"])).' '. ucwords(strtolower($row["nombre"]))
+                    'abreviatura' => ($row["nombre"] ? explode(" ",ucwords(mb_strtolower($row["nombre"]))[0]) : '').' '.ucwords(mb_strtolower($row["ape_paterno_empl"])),
+                    'ctipoidentificacion' => 2 
+                  
+                    
                 ));
                 //nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion   
                 $lastInsertId = $pdoupdate_insert->lastInsertId();
@@ -157,9 +163,9 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                     )
                 );
 
-               // echo $row["documento_empleado"].' '.$row["nombre"].' '.$row["ape_paterno_empl"]."\n";
+                //echo $row["documento_empleado"].' '.$row["nombre"].' '.$row["ape_paterno_empl"].' '.$row["codigo_sig"].' - '.$var1.' - '.$var2. "\n";
                 $count++;
-            }
+            
            // array_push($array_flowdesk_scp, $row);
         endforeach;
         echo $count;
@@ -256,7 +262,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
     public function capturarCentrodeCosto($documento_empleado)
     {
-        $querycc_fd = "select DISTINCT(emp.documento_empleado),scc.descripcion as centro_costo ,scc.codigo as codigo_sig,max(conn.id) as ultimocontrato
+        $querycc_fd = "select DISTINCT(LTRIM(RTRIM(emp.documento_empleado)))  as documento_empleado,scc.descripcion as centro_costo ,scc.codigo as codigo_sig,max(conn.id) as ultimocontrato
         from empleado emp
         left join (select * from rh_contrato con where con.fecha_fin_prog is null) conn on emp.id = conn.id_empleado
         left join subcentrocosto scc on conn.id_sub_centrocosto = scc.id
@@ -268,7 +274,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
         $cod_sig->execute();
         $codigo_sig_fd = $cod_sig->fetch();
 
-        return $codigo_sig_fd['codigo_sig'];
+        return trim($codigo_sig_fd['codigo_sig']);
     }
 
     public function capturarCentrodeCostoSCP($codigo_sig)
@@ -310,9 +316,19 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
        //echo($fin);
 
     }
+    public function borrarEspaciosdocumento_empleado()
+    {
+        $query = "update tpersona set identificacion = trim(identificacion);";
+        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt->execute();
+       
+    }
 }
 
 $foo = new obtenerDataUsuariosFlowdesk();
+
+// Borrar los espacios en blanco 
+$foo->borrarEspaciosdocumento_empleado();
 // inserta la data de usuarios deñ FD al SCPv2
 $foo->dataUsuariosFlowdesk();
 // Inactiva a los usuarios tanto en personal como usuarios
