@@ -104,7 +104,7 @@ class getdata_scpv2UM_scpv3
                     $cont++;
                     $data_actualizada->execute(array(
                         'tipodir'               => 1,
-                        'direcciondir'          =>  ucwords(strtolower($scpv2["direccion"])),
+                        'direcciondir'          =>  ucwords(mb_strtolower($scpv2["direccion"])),
                         'numerodir'             => $scpv2["numero"],
                         'referenciadir'         => $scpv2["referencia"],
                         't_ubigeo_idubi'        => $this->capturarUbigeo($scpv2["cubigeo"]),  // Ampliar el tamaño mayor a 5 y que no se null para insertar la data
@@ -117,7 +117,7 @@ class getdata_scpv2UM_scpv3
 
             $data_insertada->execute(array(
                 'tipodir'               => 1,
-                'direcciondir'          =>  ucwords(strtolower($scpv2["direccion"])),
+                'direcciondir'          =>  ucwords(mb_strtolower($scpv2["direccion"])),
                 'numerodir'             => $scpv2["numero"],
                 'referenciadir'         => $scpv2["referencia"],
                 't_ubigeo_idubi'        => $this->capturarUbigeo($scpv2["cubigeo"]),   // Ampliar el tamaño mayor a 5 y que no se null para insertar la data
@@ -138,7 +138,7 @@ class getdata_scpv2UM_scpv3
                     $cont2++;
                     $data_actualizada->execute(array(
                         'tipodir'               => 2,
-                        'direcciondir'          =>  ucwords(strtolower($scpv2UM["direccion"])),
+                        'direcciondir'          =>  ucwords(mb_strtolower($scpv2UM["direccion"])),
                         'numerodir'             => null,
                         'referenciadir'         => null,
                         't_ubigeo_idubi'        => $this->capturarUbigeo($scpv2UM["cubigeo"]),  // Ampliar el tamaño mayor a 5 y que no se null para insertar la data
@@ -151,7 +151,7 @@ class getdata_scpv2UM_scpv3
 
             $data_insertada->execute(array(
                 'tipodir'               => 2,
-                'direcciondir'          =>  ucwords(strtolower($scpv2UM["direccion"])),
+                'direcciondir'          =>  ucwords(mb_strtolower($scpv2UM["direccion"])),
                 'numerodir'             => null,
                 'referenciadir'         => null,
                 't_ubigeo_idubi'        => $this->capturarUbigeo($scpv2UM["cubigeo"]),  // Ampliar el tamaño mayor a 5 y que no se null para insertar la data

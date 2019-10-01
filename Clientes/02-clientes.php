@@ -81,8 +81,8 @@ class getdata_scpv2_scpv3
                     $cont++;
                      $data_actualizada->execute(array(
                     'codmigracli' =>$scpv2["cpersona"],
-                    'razon_socialcli' => ucwords(strtolower($scpv2["razonsocial"])),
-                    'nombre_comercialcli' => ucwords(strtolower($scpv2["nombrecomercial"])),
+                    'razon_socialcli' => ucwords(mb_strtolower($scpv2["razonsocial"])),
+                    'nombre_comercialcli' => ucwords(mb_strtolower($scpv2["nombrecomercial"])),
                     'abreviaturacli' =>'', // Ampliar el tamaño del campo de abreviaturacli
                    // 'abreviaturacli' =>$scpv2["abreviatura"],
                     'id_tributariacli' =>$scpv2["identificacion"],  
@@ -98,8 +98,8 @@ class getdata_scpv2_scpv3
 
            $data_insertada->execute(array(
                     'codmigracli' =>$scpv2["cpersona"],
-                    'razon_socialcli' => ucwords(strtolower($scpv2["razonsocial"])),
-                    'nombre_comercialcli' => ucwords(strtolower($scpv2["nombrecomercial"])),
+                    'razon_socialcli' => ucwords(mb_strtolower($scpv2["razonsocial"])),
+                    'nombre_comercialcli' => ucwords(mb_strtolower($scpv2["nombrecomercial"])),
                     'abreviaturacli' =>'',// Ampliar el tamaño del campo de abreviaturacli
                    // 'abreviaturacli' =>$scpv2["abreviatura"],
                     'id_tributariacli' =>$scpv2["identificacion"], 

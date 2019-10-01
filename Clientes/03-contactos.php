@@ -56,11 +56,11 @@ class getdata_scpv2Contactos_scpv3
                 if ($scpv2['cunidadmineracontacto'] == $scpv3['codmigracont']) {
                     $cont++;
                     $data_actualizada->execute(array(
-                        'apaternocont' => ucwords(strtolower($scpv2["apaterno"])),
-                        'amaternocont' => ucwords(strtolower($scpv2["amaterno"])),
-                        'nombrescont' =>  ucwords(strtolower($scpv2["nombres"])),
+                        'apaternocont' => ucwords(mb_strtolower($scpv2["apaterno"])),
+                        'amaternocont' => ucwords(mb_strtolower($scpv2["amaterno"])),
+                        'nombrescont' =>  ucwords(mb_strtolower($scpv2["nombres"])),
                         't_cargo_idcarg' => $this->capturarCargo($scpv2["ccontactocargo"]),
-                        'correocontac' => strtolower($scpv2["email"]),
+                        'correocontac' => mb_strtolower($scpv2["email"]),
                         'fregistrocont' => $fecha_actual,
                         'estadocont' => 0,
                         'codmigracont' => $scpv2['cunidadmineracontacto']
@@ -71,11 +71,11 @@ class getdata_scpv2Contactos_scpv3
             endforeach;
 
             $data_insertada->execute(array(
-                'apaternocont' => ucwords(strtolower($scpv2["apaterno"])),
-                'amaternocont' => ucwords(strtolower($scpv2["amaterno"])),
-                'nombrescont' => ucwords(strtolower($scpv2["nombres"])),
+                'apaternocont' => ucwords(mb_strtolower($scpv2["apaterno"])),
+                'amaternocont' => ucwords(mb_strtolower($scpv2["amaterno"])),
+                'nombrescont' => ucwords(mb_strtolower($scpv2["nombres"])),
                 't_cargo_idcarg' => $this->capturarCargo($scpv2["ccontactocargo"]),
-                'correocontac' => strtolower($scpv2["email"]),
+                'correocontac' => mb_strtolower($scpv2["email"]),
                 'fregistrocont' => $fecha_actual,
                 'estadocont' => 0,
                 'codmigracont' => $scpv2['cunidadmineracontacto']
