@@ -12,11 +12,13 @@ class getdata_scpv2_scpv3 extends conexioSQL
 
     public function getDataClientescpV2()
     {
-        $query = " select distinct(tpy.cpersonacliente) as cpersona,tp.nombre,trim(tp.identificacion) as identificacion ,tpj.razonsocial,tpj.nombrecomercial,tp.abreviatura,tpj.web,min(tpd.numerodireccion),tpd.cpais from tproyecto tpy
-        inner join tpersona tp on tp.cpersona =  tpy.cpersonacliente 
-         left JOIN (select * from tpersonadirecciones con where con.numerodireccion = 1  ) tpd on tpd.cpersona = tpy.cpersonacliente
-         inner join tpersonajuridicainformacionbasica tpj on tpj.cpersona =  tpy.cpersonacliente
-         group by tpy.cpersonacliente,tp.nombre,identificacion,tpj.razonsocial,tpj.nombrecomercial,tp.abreviatura,tpj.web,tpd.cpais";
+        $query = "select distinct(tu.cpersona),tp.nombre,trim(tp.identificacion) as identificacion,tpj.razonsocial,tpj.nombrecomercial,tp.abreviatura,tpj.web,min(tpd.numerodireccion),tpd.cpais from tunidadminera as tu
+        left join tproyecto tpy on tpy.cunidadminera = tu.cunidadminera
+        inner join tpersona tp on tp.cpersona =  tu.cpersona
+         left JOIN (select * from tpersonadirecciones con where con.numerodireccion = 1  ) tpd on tpd.cpersona = tu.cpersona
+         inner join tpersonajuridicainformacionbasica tpj on tpj.cpersona =  tu.cpersona
+         group by tu.cpersona,tp.nombre,identificacion,tpj.razonsocial,tpj.nombrecomercial,tp.abreviatura,tpj.web,tpd.cpais
+        order by tu.cpersona ;";
         $stmt = $this->conexionpdoPostgres()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll(); 
