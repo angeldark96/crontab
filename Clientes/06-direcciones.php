@@ -60,16 +60,21 @@ class getdata_scpv2UM_scpv3
     public function getDataActualizaroRegistrar()
     {
         $datascpv2 =  $this->getDataDireccionescpV2();
+        
         $datascpv3 =  $this->getDataDireccionescpV3();
+
         $datascpUMv2 = $this->getDataDireccionesUMcpV2();
 
-        $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+
+         $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+
+        // print_r($conexionSCPv3);
         $cont = 0;
         $cont1 = 0;
         $cont2 = 0;
         $cont3 = 0;
 
-
+        
         $data_insertada = $conexionSCPv3->prepare("INSERT INTO scliente.t_direcciones ( tipodir,
                                                                                         direcciondir,
                                                                                         numerodir,
@@ -114,12 +119,12 @@ class getdata_scpv2UM_scpv3
                     continue 2;
                 }
             endforeach;
-
+           // echo(ucwords(mb_strtolower($scpv2["direccion"])).'--'. $scpv2['cpersona'].'--'.$scpv2["direccion"])."\n";
             $data_insertada->execute(array(
                 'tipodir'               => 1,
                 'direcciondir'          =>  ucwords(mb_strtolower($scpv2["direccion"])),
-                'numerodir'             => $scpv2["numero"],
-                'referenciadir'         => $scpv2["referencia"],
+                'numerodir'             => $scpv2["numero"] ? $scpv2["numero"] : null,
+                'referenciadir'         => $scpv2["referencia"]? $scpv2["referencia"] : null,
                 't_ubigeo_idubi'        => $this->capturarUbigeo($scpv2["cubigeo"]),   // Ampliar el tamaño mayor a 5 y que no se null para insertar la data
                 't_pais_idpais'         => $this->capturarPais($scpv2["cpais"]), // Ampliar el tamaño a 5  y que no se null para insertar la data
                 'codmigradirecciones'   => $scpv2['cpersona']

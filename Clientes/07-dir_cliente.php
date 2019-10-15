@@ -27,6 +27,15 @@ class getdata_scpv2UM_scpv3
         return $listArray;
     }
 
+    public function getDataExistsClienteinClidir($idCliente)
+    {
+        $query = "SELECT * FROM scliente.tclidir where t_cliente_idcliente = $idCliente ";
+        $stmt = $this->conexionpdoPostgresTestscpv3()->query($query);
+        $row_count = $stmt->rowCount();
+        $res = ($row_count > 0) ? 'data' : 'sin_data';
+        return $res;
+    }
+
     public function getDataActualizaroRegistrar()
     {
         $dataCliente_scpv3 =  $this->getDataClientescpV3();
@@ -49,29 +58,31 @@ class getdata_scpv2UM_scpv3
                                                                     t_cliente_idcliente        = :t_cliente_idcliente
                                                                     WHERE  t_cliente_idcliente  = :t_cliente_idcliente
                                                    ");
+                                                   
         foreach ($dataDirecciones_scpv3 as $scpdv3) :
             foreach ($dataCliente_scpv3 as $scpcv3) :
-                if ($scpcv3['codmigracli'] == $scpdv3['codmigradirecciones']) {
+                if ($scpcv3['codmigracli'] == $scpdv3['codmigradirecciones'] &&  $this->getDataExistsClienteinClidir($scpcv3["idcliente"]) == 'sin_data'  ) {
                     $cont++;
-                    $data_insertada->execute(array(
+                      $data_insertada->execute(array(
                         't_direcciones_iddir'   => $scpdv3["iddir"],
                         't_cliente_idcliente'   => $scpcv3["idcliente"]
-                    ));
+                    )); 
+
                     continue 2;
                 }
+               
             endforeach;
 
-            // $data_insertada->execute(array(
-            //     't_direcciones_iddir'   => $scpdv3["iddir"],
-            //     't_cliente_idcliente'   => $scpcv3["idcliente"]
-            // ));
 
-            $cont1++;
+          
         endforeach;
-        echo($cont1.' '.'Direccion de Clientes insertados - dir_cliente')."\n";
-        echo($cont.' '.'Direccion de Clientes actualizados - dir_cliente');
+        
+        echo ($cont . ' ' . 'Direccion de Clientes insertados - dir_cliente')."\n";
+      //  echo($cont1.' '.'Direccion de Clientes actualizados - dir_cliente');
     }
 }
 
 $data = new getdata_scpv2UM_scpv3();
 $data->getDataActualizaroRegistrar();
+
+//echo($data->getDataExistsClienteinClidir(68));

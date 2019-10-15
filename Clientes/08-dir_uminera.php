@@ -27,6 +27,15 @@ class getdata_scpv2UM_scpv3
         return $listArray;
     }
 
+    public function getDataExistsUMineraindirUM($idum)
+    {
+        $query = "SELECT * FROM scliente.tdirum where t_unidadminera_idum = $idum ";
+        $stmt = $this->conexionpdoPostgresTestscpv3()->query($query);
+        $row_count = $stmt->rowCount();
+        $res = ($row_count > 0) ? 'data' : 'sin_data';
+        return $res;
+    }
+
     public function getDataActualizaroRegistrar()
     {
         $dataCliente_scpv3 =  $this->getDataClientescpV3();
@@ -51,7 +60,7 @@ class getdata_scpv2UM_scpv3
                                                    ");
         foreach ($dataDirecciones_scpv3 as $scpdv3) :
             foreach ($dataCliente_scpv3 as $scpcv3) :
-                if ($scpcv3['codmigraum'] == $scpdv3['codmigradirecciones']) {
+                if ($scpcv3['codmigraum'] == $scpdv3['codmigradirecciones']  &&  $this->getDataExistsUMineraindirUM($scpcv3["idum"]) == 'sin_data') {
                     $cont++;
                     $data_insertada->execute(array(
 
@@ -69,8 +78,8 @@ class getdata_scpv2UM_scpv3
 
             $cont1++;
         endforeach;
-        echo($cont1.' '.'Direccion de U Minera insertados - dir_UMinera')."\n";
-        echo($cont.' '.'Direccion de U Minera actualizados - dir_UMinera');
+       // echo($cont1.' '.'Direccion de U Minera insertados - dir_UMinera')."\n";
+        echo($cont.' '.'Direccion de U Minera insertados - dir_UMinera');
     }
 }
 
