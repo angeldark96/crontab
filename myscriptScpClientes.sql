@@ -32,3 +32,4 @@ where t3.cpersona=4551;
 
 delete from tpersona as t 
 where t.cpersona=4551;
+
