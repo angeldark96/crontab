@@ -23,7 +23,7 @@ where t3.cpersona=4551;
 delete from tpersona as t 
 where t.cpersona=4551;
 
--- client 2 a eliminar
+-- client 2 a eliminar 
 delete from tpersonadirecciones as t2  
 where t2.cpersona=4551;
 
@@ -32,6 +32,3 @@ where t3.cpersona=4551;
 
 delete from tpersona as t 
 where t.cpersona=4551;
-
-
-
