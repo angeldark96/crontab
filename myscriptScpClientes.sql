@@ -10,7 +10,7 @@ update tpersona set identificacion = '20100147514' where cpersona = 4493;
 update tpersona set identificacion = 'RUC004' where cpersona = 4496;
 
 update tpersonadirecciones set direccion = 'Jr. Manuel del Águila Nro. 667 (Oficina 1) San Martin - Moyobamba - Moyobamba'  where cpersona = 4498
-update tpersonadirecciones set direccion = 'N. Graig Street-pittsburgh, Pa 15213 - Usa'  where t.cpersona = 4537 and ctipodireccion  = 'COM'
+update tpersonadirecciones set direccion = 'N. Graig Street-pittsburgh, Pa 15213 - Usa'  where cpersona = 4537 and ctipodireccion  = 'COM'
 
 
 -- client 1 a eliminar

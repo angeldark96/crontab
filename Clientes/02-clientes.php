@@ -1,14 +1,12 @@
 <?php 
 
-require_once '../Crontab/database/postgres_conexion.php';
-require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
-require_once '../Crontab/database/sqlsrv_conexion.php';
+require_once '../Crontab/database/conexionesdb.php';
 
 //require_once '../Crontab/database/pg_tblog_conexion.php';
 
 class getdata_scpv2_scpv3 extends conexioSQL
 {
-    use conexionPostgres, conexionTestPostgresdbscpv3;
+    
 
     public function getDataClientescpV2()
     {
@@ -19,7 +17,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
          inner join tpersonajuridicainformacionbasica tpj on tpj.cpersona =  tu.cpersona
          group by tu.cpersona,tp.nombre,identificacion,tpj.razonsocial,tpj.nombrecomercial,tp.abreviatura,tpj.web,tpd.cpais
         order by tu.cpersona ;";
-        $stmt = $this->conexionpdoPostgres()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll(); 
 
@@ -54,7 +52,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
         $fd =  $this->dataClienteSCPV2enFD();
         $con = 0;
 
-        $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+        $conexionSCPv3 = $this->conexionpdoPostgresLocalSCPv3();
 
         $data_actualizada = $conexionSCPv3->prepare("UPDATE scliente.t_cliente  SET 
               
@@ -100,7 +98,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
     public function getDataClientescpV3()
     {
         $queryv3 = "SELECT *  FROM scliente.t_cliente";
-        $stmtv3 = $this->conexionpdoPostgresTestscpv3()->prepare($queryv3);
+        $stmtv3 = $this->conexionpdoPostgresLocalSCPv3()->prepare($queryv3);
         $stmtv3->execute();
         $listArrayv3 = $stmtv3->fetchAll(); 
         return $listArrayv3;
@@ -114,7 +112,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
         $datascpv2 =  $this->getDataClientescpV2();
         $datascpv3 =  $this->getDataClientescpV3();
 
-        $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+        $conexionSCPv3 = $this->conexionpdoPostgresLocalSCPv3();
         $cont = 0;
         $cont1 = 0;
         $fecha_actual = date("Y-m-d");
@@ -189,7 +187,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
         if($cpais!=null || $cpais!='')
         {
             $querypais = "SELECT idpais  FROM scliente.t_pais WHERE abrpais = '$cpais'";
-            $pais = $this->conexionpdoPostgresTestscpv3()->prepare($querypais);
+            $pais = $this->conexionpdoPostgresLocalSCPv3()->prepare($querypais);
             $pais->execute();
             $capurarPais = $pais->fetch(); 
             $indicarPais = $capurarPais[0];
@@ -207,7 +205,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
         $query_razon = "SELECT razon_socialcli  FROM scliente.t_cliente WHERE codmigracli = $codmigracli";
 
         // $querypais = "SELECT abremp  FROM scliente.t_tipoempresa WHERE abremp = '$razonSocial'";
-        $tempresa = $this->conexionpdoPostgresTestscpv3()->prepare($query_razon);
+        $tempresa = $this->conexionpdoPostgresLocalSCPv3()->prepare($query_razon);
         $tempresa->execute();
         $capurarempresa = $tempresa->fetch();
         $quitarespaciosEmpresa = trim($capurarempresa[0]);
@@ -222,7 +220,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
         $query_razon = "SELECT razon_socialcli  FROM scliente.t_cliente WHERE id_tributariacli = '$numdoc'";
 
         // $querypais = "SELECT abremp  FROM scliente.t_tipoempresa WHERE abremp = '$razonSocial'";
-        $tempresa = $this->conexionpdoPostgresTestscpv3()->prepare($query_razon);
+        $tempresa = $this->conexionpdoPostgresLocalSCPv3()->prepare($query_razon);
         $tempresa->execute();
         $capurarempresa = $tempresa->fetch();
         $quitarespaciosEmpresa = trim($capurarempresa[0]);
@@ -236,7 +234,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
     public function TipoEmpresaSegunRazonSocial($abre)
     {
        $query_empresa = "SELECT idemp FROM scliente.t_tipoempresa WHERE abremp = '$abre'";
-       $tempresa = $this->conexionpdoPostgresTestscpv3()->prepare($query_empresa);
+       $tempresa = $this->conexionpdoPostgresLocalSCPv3()->prepare($query_empresa);
        $tempresa->execute();
        $capurarempresa = $tempresa->fetch();
        // echo( $capurarempresa[0]);
@@ -247,13 +245,13 @@ class getdata_scpv2_scpv3 extends conexioSQL
     public function TipoTributo($abrpais)
     {
        $query_pais = "SELECT idpais FROM scliente.t_pais WHERE abrpais = '$abrpais'";
-       $idpais = $this->conexionpdoPostgresTestscpv3()->prepare($query_pais);
+       $idpais = $this->conexionpdoPostgresLocalSCPv3()->prepare($query_pais);
        $idpais->execute();
        $capurarpais = $idpais->fetch();
        $dataid_pais = $capurarpais[0] ? $capurarpais[0] : 7;
 
        $query_tipotrib = "SELECT idtrib FROM scliente.t_tipotrib WHERE t_pais_idpais = $dataid_pais";
-       $abrtrib = $this->conexionpdoPostgresTestscpv3()->prepare($query_tipotrib);
+       $abrtrib = $this->conexionpdoPostgresLocalSCPv3()->prepare($query_tipotrib);
        $abrtrib->execute();
        $capurartributo = $abrtrib->fetch();
        //echo($capurartributo[0]); 

@@ -1,13 +1,11 @@
 <?php
 
-require_once 'database/sqlsrv_conexion.php';
-require_once 'database/postgres_conexion.php';
-require_once 'database/pg_tblog_conexion.php';
+require_once 'database/conexionesdb.php';
 
 
 class getdataFlowdesk extends conexioSQL
 {
-    use conexionPostgres, conexionPostgresTest;
+  
 
     public function getTipodeCambioFlowdesk()
     {
@@ -38,7 +36,7 @@ class getdataFlowdesk extends conexioSQL
 
             if ($this->capturardataMoneda() == 'data') {
                 $data =  $this->getTipodeCambioFlowdesk();
-                $pdo = $this->conexionpdoPostgres();
+                $pdo = $this->conexionpdoPostgresLocalSCPv2();
                 $result_set = $pdo->prepare("INSERT INTO tmonedacambio (cmoneda,cmonedavalor,fecha,valorcompra,valorventa) VALUES (:cmoneda,:cmonedavalor,:fecha,:valorcompra,:valorventa)");
                 foreach ($data as $row) {
                     $result_set->execute(array(
@@ -49,11 +47,11 @@ class getdataFlowdesk extends conexioSQL
                         'valorventa' => $row["tipocambio_emision"]
                     ));
                 }
-              return  $this->conexionpdoPostgresTestLog($fechaActual, 'tipodeCambio', 'Éxito');
+              return  $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, 'tipodeCambio', 'Éxito');
 
             } else {
 
-              return  $this->conexionpdoPostgresTestLog($fechaActual, 'tipodeCambio', 'No se encontro data');
+              return  $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, 'tipodeCambio', 'No se encontro data');
             }
         } catch (PDOException $e) {
             echo  $e->getMessage();
@@ -73,7 +71,7 @@ class getdataFlowdesk extends conexioSQL
         $in_values = implode(',', $id_monedas);
         $data_values =  $in_values == null ? 123456789  : $in_values;
         $query = "SELECT * FROM tmonedas where pk_flowdesk in ($data_values)";
-        $pdo_test = $this->conexionpdoPostgres()->query($query);
+        $pdo_test = $this->conexionpdoPostgresLocalSCPv2()->query($query);
         $row_count = $pdo_test->rowCount();
         $res = ($row_count > 0) ? 'data' : 'sin_data';
         return $res;
@@ -83,7 +81,7 @@ class getdataFlowdesk extends conexioSQL
     {
        
         $query = "SELECT * FROM tmonedas where pk_flowdesk = $value";
-        $stmt = $this->conexionpdoPostgres()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
         $stmt->execute();
         // $listArray = $stmt->fetchAll(); -- array varios registros
         $listArray = $stmt->fetch(); // unico registro

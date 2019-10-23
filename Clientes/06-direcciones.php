@@ -1,18 +1,17 @@
 <?php
 
-require_once '../Crontab/database/postgres_conexion.php';
-require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
+
+require_once '../Crontab/database/conexionesdb.php';
 //require_once '../Crontab/database/pg_tblog_conexion.php';
 
-class getdata_scpv2UM_scpv3
+class getdata_scpv2UM_scpv3 extends conexioSQL
 {
-    use conexionPostgres, conexionTestPostgresdbscpv3;
 
     public function getDataDireccionescpV2()
     {
         // Direcciones d los clientes
         $query = "SELECT * FROM tpersonajuridicainformacionbasica ORDER BY cpersona";
-        $stmt = $this->conexionpdoPostgres()->query($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->query($query);
         $direccionesClientes = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array_push($direccionesClientes, $row['cpersona']);
@@ -22,7 +21,7 @@ class getdata_scpv2UM_scpv3
         // direcciones de las unidades Mineras
 
         $queryUM = "SELECT * FROM tunidadminera ORDER BY cunidadminera";
-        $stmtUM = $this->conexionpdoPostgres()->query($queryUM);
+        $stmtUM = $this->conexionpdoPostgresProductionSCPv2()->query($queryUM);
         $direccionesUM = [];
         while ($row = $stmtUM->fetch(PDO::FETCH_ASSOC)) {
             array_push($direccionesUM, $row['cunidadminera']);
@@ -32,7 +31,7 @@ class getdata_scpv2UM_scpv3
         // Conseguir direcion, referencia, numero , pais , cubigeo del cliente
 
         $query = "SELECT * FROM tpersonadirecciones where cpersona in ($in_direccionesClientes)";
-        $pdo_test = $this->conexionpdoPostgres()->query($query);
+        $pdo_test = $this->conexionpdoPostgresProductionSCPv2()->query($query);
 
         $direccionesfullCliente = [];
 
@@ -50,7 +49,7 @@ class getdata_scpv2UM_scpv3
     public function getDataDireccionescpV3()
     {
         $query = "SELECT * FROM scliente.t_direcciones";
-        $stmt = $this->conexionpdoPostgresTestscpv3()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv3()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll();
 
@@ -66,7 +65,7 @@ class getdata_scpv2UM_scpv3
         $datascpUMv2 = $this->getDataDireccionesUMcpV2();
 
 
-         $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+         $conexionSCPv3 = $this->conexionpdoPostgresLocalSCPv3();
 
         // print_r($conexionSCPv3);
         $cont = 0;
@@ -175,7 +174,7 @@ class getdata_scpv2UM_scpv3
     public function capturarPais($cpais)
     {
         $querypais = "SELECT idpais  FROM scliente.t_pais WHERE abrpais = '$cpais'";
-        $pais = $this->conexionpdoPostgresTestscpv3()->prepare($querypais);
+        $pais = $this->conexionpdoPostgresLocalSCPv3()->prepare($querypais);
         $pais->execute();
         $capurarPais = $pais->fetch();
         return $capurarPais[0];
@@ -185,7 +184,7 @@ class getdata_scpv2UM_scpv3
     public function capturarUbigeo($cubigeo)
     {
         $queryubigeo = "SELECT *  FROM scliente.t_ubigeo WHERE codubi = '$cubigeo'";
-        $ubigeo = $this->conexionpdoPostgresTestscpv3()->prepare($queryubigeo);
+        $ubigeo = $this->conexionpdoPostgresLocalSCPv3()->prepare($queryubigeo);
         $ubigeo->execute();
         $capurarUbigeo = $ubigeo->fetch();
         return $capurarUbigeo['idubi'];
@@ -195,7 +194,7 @@ class getdata_scpv2UM_scpv3
     {
         // Conseguir direcion, referencia, numero , pais , cubigeo del cliente
         $queryUM = "SELECT * FROM tunidadminera ORDER BY cunidadminera";
-        $stmtUM = $this->conexionpdoPostgres()->query($queryUM);
+        $stmtUM = $this->conexionpdoPostgresProductionSCPv2()->query($queryUM);
         $stmtUM->execute();
         $listArray = $stmtUM->fetchAll();
         //print_r($listArray);

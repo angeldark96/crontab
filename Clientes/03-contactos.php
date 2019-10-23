@@ -1,5 +1,7 @@
 <?php
 
+//! No se migra
+
 require_once '../Crontab/database/postgres_conexion.php';
 require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
 

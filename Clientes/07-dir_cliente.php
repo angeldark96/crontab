@@ -1,18 +1,17 @@
 <?php
 
-require_once '../Crontab/database/postgres_conexion.php';
-require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
-//require_once '../Crontab/database/pg_tblog_conexion.php';
+require_once '../Crontab/database/conexionesdb.php';
 
-class getdata_scpv2UM_scpv3
+class getdata_scpv2UM_scpv3 extends conexioSQL
+
 {
-    use conexionPostgres, conexionTestPostgresdbscpv3;
+    
 
 
     public function getDataClientescpV3()
     {
         $query = "SELECT * FROM scliente.t_cliente";
-        $stmt = $this->conexionpdoPostgresTestscpv3()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv3()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll();
         return $listArray;
@@ -21,7 +20,7 @@ class getdata_scpv2UM_scpv3
     public function getDataDireccionescpV3()
     {
         $query = "SELECT * FROM scliente.t_direcciones";
-        $stmt = $this->conexionpdoPostgresTestscpv3()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv3()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll();
         return $listArray;
@@ -30,7 +29,7 @@ class getdata_scpv2UM_scpv3
     public function getDataExistsClienteinClidir($idCliente)
     {
         $query = "SELECT * FROM scliente.tclidir where t_cliente_idcliente = $idCliente ";
-        $stmt = $this->conexionpdoPostgresTestscpv3()->query($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv3()->query($query);
         $row_count = $stmt->rowCount();
         $res = ($row_count > 0) ? 'data' : 'sin_data';
         return $res;
@@ -41,7 +40,7 @@ class getdata_scpv2UM_scpv3
         $dataCliente_scpv3 =  $this->getDataClientescpV3();
         $dataDirecciones_scpv3 =  $this->getDataDireccionescpV3();
 
-        $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+        $conexionSCPv3 = $this->conexionpdoPostgresLocalSCPv3();
         $cont = 0;
         $cont1 = 0;
 

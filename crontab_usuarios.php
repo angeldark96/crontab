@@ -1,13 +1,11 @@
 <?php
 
-require_once 'database/sqlsrv_conexion.php';
-require_once 'database/postgres_conexion.php';
-require_once 'database/pg_tblog_conexion.php';
-require_once 'database/postgres_test_conexion.php';
+require_once 'database/conexionesdb.php';
+
 
 class obtenerDataUsuariosFlowdesk extends conexioSQL
 {
-    use conexionPostgres, conexionPostgresTest, conexionPostgres_QA;
+   // use conexionPostgres, conexionPostgresTest, conexionPostgres_QA;
 
     public function dataUsuariosFlowdesk()
     {
@@ -30,14 +28,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
         // Data del SCP
         $queryscp = "select distinct(trim(identificacion)) as documento_empleado from tpersona where ctipopersona = 'NAT'";
-        $pdo = $this->conexionpdoPostgresTest_QA()->query($queryscp);
+        $pdo = $this->conexionpdoPostgresLocalSCPv2()->query($queryscp);
         $listArrayscp2 = $pdo->fetchAll(PDO::FETCH_OBJ);
         $listArrayscp = array_column($listArrayscp2, "documento_empleado");
         //$listArrayscp = trim($listArrayscp);
 
         //print_r($listArrayscp);
 
-        $pdoupdate_insert = $this->conexionpdoPostgresTest_QA();
+        $pdoupdate_insert = $this->conexionpdoPostgresLocalSCPv2();
         $countInsertados = 0;
         $countActualizados = 0;
         $result_set = $pdoupdate_insert->prepare("UPDATE tpersona SET nombre = :nombre,
@@ -181,8 +179,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                      
                 
             endforeach;
-            $this->conexionpdoPostgresTestLog($fechaActual, " $countActualizados Usuarios de planilla actualizados", 'Éxito');
-            $this->conexionpdoPostgresTestLog($fechaActual, "'$countInsertados' Usuarios de planilla insertados", 'Éxito');
+            $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, " $countActualizados Usuarios de planilla actualizados", 'Éxito');
+            $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, " $countInsertados Usuarios de planilla insertados", 'Éxito');
         } catch (PDOException $e) {
             echo  $e->getMessage();
         }
@@ -206,7 +204,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
        // Lista de Usuarios de Logistica
        $dataUserLogistica = $this->dataUserRecibosHonorarios();
 
-       $pdoupdate_insert = $this->conexionpdoPostgresTest_QA();
+       $pdoupdate_insert = $this->conexionpdoPostgresLocalSCPv2();
        $cesarusuariossincontratoRXH = 0;
        $countUserHActualizados = 0;
        $countUserHInsertados = 0;
@@ -351,7 +349,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion = '$dniperu'
                 ) AS subquery
                 WHERE tpersonadatosempleado.cpersona=subquery.cpersona;";
-                $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+                $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
                 $stmt->execute();
                 $data = $stmt->fetchAll();
 
@@ -364,7 +362,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion = '$dniperu'
                 ) AS subquery
                 WHERE tusuarios.cpersona=subquery.cpersona;";
-                $stmtuser = $this->conexionpdoPostgresTest_QA()->prepare($queryuser);
+                $stmtuser = $this->conexionpdoPostgresLocalSCPv2()->prepare($queryuser);
                 $stmtuser->execute();
                 $datauser = $stmtuser->fetchAll();
 
@@ -375,8 +373,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
            echo($countUserHActualizados)."\n";
            echo($countUserHInsertados)."\n"; */
            
-           $this->conexionpdoPostgresTestLog($fechaActual, "$countUserHActualizados Usuarios de RXH actualizados", 'Éxito');
-           $this->conexionpdoPostgresTestLog($fechaActual, "$countUserHInsertados Usuarios de RXH insertados", 'Éxito');
+           $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, "$countUserHActualizados Usuarios de RXH actualizados", 'Éxito');
+           $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, "$countUserHInsertados Usuarios de RXH insertados", 'Éxito');
        } catch (PDOException $e) {
            echo  $e->getMessage();
        }
@@ -412,14 +410,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
         // Data del SCP
         $queryscp = "select distinct(trim(identificacion)) as documento_empleado from tpersona where ctipopersona = 'NAT'";
-        $pdo = $this->conexionpdoPostgresTest_QA()->query($queryscp);
+        $pdo = $this->conexionpdoPostgresLocalSCPv2()->query($queryscp);
         $listArrayscp2 = $pdo->fetchAll(PDO::FETCH_OBJ);
         $listArrayscp = array_column($listArrayscp2, "documento_empleado");
         //$listArrayscp = trim($listArrayscp);
 
         //print_r($listArrayscp);
 
-        $pdoupdate_insert = $this->conexionpdoPostgresTest_QA();
+        $pdoupdate_insert = $this->conexionpdoPostgresLocalSCPv2();
         $count = 0;
         $result_set = $pdoupdate_insert->prepare("UPDATE tpersona SET nombre = :nombre,
                                                                       identificacion = :identificacion,
@@ -548,7 +546,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion in ('$in_values')
                 ) AS subquery
                 WHERE tpersonadatosempleado.cpersona=subquery.cpersona;";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetchAll();
 
@@ -561,7 +559,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion in ('$in_values')
                 ) AS subquery
                 WHERE tusuarios.cpersona=subquery.cpersona;";
-        $stmtuser = $this->conexionpdoPostgresTest_QA()->prepare($queryuser);
+        $stmtuser = $this->conexionpdoPostgresLocalSCPv2()->prepare($queryuser);
         $stmtuser->execute();
         $datauser = $stmtuser->fetchAll();
     }
@@ -569,7 +567,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function capturarCPersona($documento_empleado)
     {
         $query = "SELECT cpersona FROM tpersona WHERE identificacion = '$documento_empleado'";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetch();
         return $listArray['cpersona'];
@@ -585,7 +583,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function capturarNacionalidadEmpleado($descripcionpais)
     {
         $query = "SELECT cpais FROM tpais WHERE descripcion = '$descripcionpais'";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetch();
         //echo $data['cpais'];
@@ -612,7 +610,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function capturarCentrodeCostoSCP($codigo_sig)
     {
         $query = "SELECT carea FROM tareas WHERE codigo_sig = '$codigo_sig'";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetch();
         return $data['carea'];
@@ -622,7 +620,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
     {
         $querylista = "SELECT * FROM ttipocontrato";
-        $stmtlista = $this->conexionpdoPostgresTest_QA()->prepare($querylista);
+        $stmtlista = $this->conexionpdoPostgresLocalSCPv2()->prepare($querylista);
         $stmtlista->execute();
         $datalista = $stmtlista->fetchAll();
 
@@ -650,7 +648,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function borrarEspaciosdocumento_empleado()
     {
         $query = "update tpersona set identificacion = trim(identificacion);";
-        $stmt = $this->conexionpdoPostgresTest_QA()->prepare($query);
+        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
         $stmt->execute();
     }
 
@@ -695,7 +693,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     {
       
         $query = "SELECT * FROM tpersona where identificacion = '$dni'";
-        $pdo_test = $this->conexionpdoPostgresTest_QA()->query($query);
+        $pdo_test = $this->conexionpdoPostgresLocalSCPv2()->query($query);
         $row_count = $pdo_test->rowCount();
         $res = ($row_count > 0) ? 'user_registrado' : 'user_sin_registrar';
         return $res;

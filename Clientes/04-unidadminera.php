@@ -1,17 +1,16 @@
 <?php
 
-require_once '../Crontab/database/postgres_conexion.php';
-require_once '../Crontab/database/postgres_scpv3Test_conexion.php';
+require_once '../Crontab/database/conexionesdb.php';
 //require_once '../Crontab/database/pg_tblog_conexion.php';
 
-class getdata_scpv2UM_scpv3
+class getdata_scpv2UM_scpv3 extends conexioSQL
 {
-    use conexionPostgres, conexionTestPostgresdbscpv3;
+    
 
     public function getDataUMscpV2()
     {
         $query = "SELECT * FROM tunidadminera  ORDER BY cpersona";
-        $stmt = $this->conexionpdoPostgres()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetchAll();
         return $listArray;
@@ -20,7 +19,7 @@ class getdata_scpv2UM_scpv3
     public function getDataUMscpV3()
     {
         $queryv3 = "SELECT *  FROM scliente.t_unidadminera";
-        $stmtv3 = $this->conexionpdoPostgresTestscpv3()->prepare($queryv3);
+        $stmtv3 = $this->conexionpdoPostgresLocalSCPv3()->prepare($queryv3);
         $stmtv3->execute();
         $listArrayv3 = $stmtv3->fetchAll();
         return $listArrayv3;
@@ -30,7 +29,7 @@ class getdata_scpv2UM_scpv3
     {
         $datascpv2 =  $this->getDataUMscpV2();
         $datascpv3 =  $this->getDataUMscpV3();
-        $conexionSCPv3 = $this->conexionpdoPostgresTestscpv3();
+        $conexionSCPv3 = $this->conexionpdoPostgresLocalSCPv3();
         $cont = 0;
         $cont1 = 0;
         $fecha_actual = date("Y-m-d");
@@ -100,7 +99,7 @@ class getdata_scpv2UM_scpv3
     {
 
         $queryv3 = "SELECT *  FROM scliente.t_cliente where codmigracli = $idcliente";
-        $stmtv3 = $this->conexionpdoPostgresTestscpv3()->prepare($queryv3);
+        $stmtv3 = $this->conexionpdoPostgresLocalSCPv3()->prepare($queryv3);
         $stmtv3->execute();
         $listArrayv3 = $stmtv3->fetch();
 
