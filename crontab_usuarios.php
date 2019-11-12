@@ -28,14 +28,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
         // Data del SCP
         $queryscp = "select distinct(trim(identificacion)) as documento_empleado from tpersona where ctipopersona = 'NAT'";
-        $pdo = $this->conexionpdoPostgresLocalSCPv2()->query($queryscp);
+        $pdo = $this->conexionpdoPostgresProductionSCPv2()->query($queryscp);
         $listArrayscp2 = $pdo->fetchAll(PDO::FETCH_OBJ);
         $listArrayscp = array_column($listArrayscp2, "documento_empleado");
         //$listArrayscp = trim($listArrayscp);
 
         //print_r($listArrayscp);
 
-        $pdoupdate_insert = $this->conexionpdoPostgresLocalSCPv2();
+        $pdoupdate_insert = $this->conexionpdoPostgresProductionSCPv2();
         $countInsertados = 0;
         $countActualizados = 0;
         $result_set = $pdoupdate_insert->prepare("UPDATE tpersona SET nombre = :nombre,
@@ -204,7 +204,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
        // Lista de Usuarios de Logistica
        $dataUserLogistica = $this->dataUserRecibosHonorarios();
 
-       $pdoupdate_insert = $this->conexionpdoPostgresLocalSCPv2();
+       $pdoupdate_insert = $this->conexionpdoPostgresProductionSCPv2();
        $cesarusuariossincontratoRXH = 0;
        $countUserHActualizados = 0;
        $countUserHInsertados = 0;
@@ -349,7 +349,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion = '$dniperu'
                 ) AS subquery
                 WHERE tpersonadatosempleado.cpersona=subquery.cpersona;";
-                $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
+                $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
                 $stmt->execute();
                 $data = $stmt->fetchAll();
 
@@ -362,7 +362,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion = '$dniperu'
                 ) AS subquery
                 WHERE tusuarios.cpersona=subquery.cpersona;";
-                $stmtuser = $this->conexionpdoPostgresLocalSCPv2()->prepare($queryuser);
+                $stmtuser = $this->conexionpdoPostgresProductionSCPv2()->prepare($queryuser);
                 $stmtuser->execute();
                 $datauser = $stmtuser->fetchAll();
 
@@ -410,14 +410,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
         // Data del SCP
         $queryscp = "select distinct(trim(identificacion)) as documento_empleado from tpersona where ctipopersona = 'NAT'";
-        $pdo = $this->conexionpdoPostgresLocalSCPv2()->query($queryscp);
+        $pdo = $this->conexionpdoPostgresProductionSCPv2()->query($queryscp);
         $listArrayscp2 = $pdo->fetchAll(PDO::FETCH_OBJ);
         $listArrayscp = array_column($listArrayscp2, "documento_empleado");
         //$listArrayscp = trim($listArrayscp);
 
         //print_r($listArrayscp);
 
-        $pdoupdate_insert = $this->conexionpdoPostgresLocalSCPv2();
+        $pdoupdate_insert = $this->conexionpdoPostgresProductionSCPv2();
         $count = 0;
         $result_set = $pdoupdate_insert->prepare("UPDATE tpersona SET nombre = :nombre,
                                                                       identificacion = :identificacion,
@@ -428,7 +428,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
 
         $tpersonaListadataadicional_update = $pdoupdate_insert->prepare("UPDATE tpersonadatosempleado SET cpersona = :cpersona,
-                                                                                                          carea  = :carea,
+                                                                                                          --carea  = :carea,
                                                                                                           estado   = :estado,
                                                                                                           ctipocontrato = :ctipocontrato,
                                                                                                           email = :email,
@@ -474,7 +474,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 ));
                 $tpersonaListadataadicional_update->execute(array(
                     'cpersona' => $this->capturarCPersona($row["documento_empleado"]),
-                    'carea'     => $this->capturarCentrodeCostoSCP($this->capturarCentrodeCosto($row["documento_empleado"])),
+                    //'carea'     => $this->capturarCentrodeCostoSCP($this->capturarCentrodeCosto($row["documento_empleado"])),
                     'estado'    =>   'INA',
                     'ctipocontrato'    => $this->capturarTipoContrato($row["id_tipo_contrato"]),
                     'email'  => $row["email"],
@@ -546,7 +546,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion in ('$in_values')
                 ) AS subquery
                 WHERE tpersonadatosempleado.cpersona=subquery.cpersona;";
-        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetchAll();
 
@@ -559,7 +559,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 where identificacion in ('$in_values')
                 ) AS subquery
                 WHERE tusuarios.cpersona=subquery.cpersona;";
-        $stmtuser = $this->conexionpdoPostgresLocalSCPv2()->prepare($queryuser);
+        $stmtuser = $this->conexionpdoPostgresProductionSCPv2()->prepare($queryuser);
         $stmtuser->execute();
         $datauser = $stmtuser->fetchAll();
     }
@@ -567,7 +567,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function capturarCPersona($documento_empleado)
     {
         $query = "SELECT cpersona FROM tpersona WHERE identificacion = '$documento_empleado'";
-        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $listArray = $stmt->fetch();
         return $listArray['cpersona'];
@@ -583,7 +583,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function capturarNacionalidadEmpleado($descripcionpais)
     {
         $query = "SELECT cpais FROM tpais WHERE descripcion = '$descripcionpais'";
-        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetch();
         //echo $data['cpais'];
@@ -610,7 +610,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function capturarCentrodeCostoSCP($codigo_sig)
     {
         $query = "SELECT carea FROM tareas WHERE codigo_sig = '$codigo_sig'";
-        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetch();
         return $data['carea'];
@@ -620,7 +620,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
     {
         $querylista = "SELECT * FROM ttipocontrato";
-        $stmtlista = $this->conexionpdoPostgresLocalSCPv2()->prepare($querylista);
+        $stmtlista = $this->conexionpdoPostgresProductionSCPv2()->prepare($querylista);
         $stmtlista->execute();
         $datalista = $stmtlista->fetchAll();
 
@@ -648,7 +648,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function borrarEspaciosdocumento_empleado()
     {
         $query = "update tpersona set identificacion = trim(identificacion);";
-        $stmt = $this->conexionpdoPostgresLocalSCPv2()->prepare($query);
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
     }
 
@@ -668,9 +668,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
         HAVING 
         (select MAX(ocit.fecha_termino_item) from ordencompra_item as ocit where MAX(oc.id) = ocit.id_ordencompra ) >= getDate()  
         and
-        DATEDIFF(DAY, MAX(oc.fechacreacion),(select MAX(ocit.fecha_termino_item) from ordencompra_item as ocit where MAX(oc.id) = ocit.id_ordencompra )) > 1 
-        and 
-        (select (ocapultimo.id_estado) from ordencompra_aprobacion as ocapultimo where ocapultimo.id = (select MAX(ocap.id) from ordencompra_aprobacion as ocap where MAX(oc.id) = ocap.id_ordencompra ) )  = 2
+        DATEDIFF(DAY, MAX(oc.fechacreacion),(select MAX(ocit.fecha_termino_item) from ordencompra_item as ocit where MAX(oc.id) = ocit.id_ordencompra )) > 1
         order by pro.ape_paterno ASC;";
         $userrh = $this->conexionpdoSQL()->query($queryuser_fd);
         $userfdRecibosHonorarios = $userrh->fetchAll();
@@ -693,7 +691,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     {
       
         $query = "SELECT * FROM tpersona where identificacion = '$dni'";
-        $pdo_test = $this->conexionpdoPostgresLocalSCPv2()->query($query);
+        $pdo_test = $this->conexionpdoPostgresProductionSCPv2()->query($query);
         $row_count = $pdo_test->rowCount();
         $res = ($row_count > 0) ? 'user_registrado' : 'user_sin_registrar';
         return $res;
