@@ -1,6 +1,6 @@
 <?php 
 
-require_once '../database/conexionesdb.php';
+require_once '../Crontab/database/conexionesdb.php';
 
 
 class getdata_scpv2_scpv3 extends conexioSQL
@@ -32,7 +32,7 @@ class getdata_scpv2_scpv3 extends conexioSQL
         $datascpv2 =  $this->getDataRolesscpV2();
        
         $datascpv3 =  $this->getDataRolesscpV3();
-        print_r($datascpv3);
+       // print_r($datascpv3);
         $conexionSCPv3 = $this->conexionpdoPostgresLocalSCPv3();
         $cont = 0;
         $cont1 = 0;
