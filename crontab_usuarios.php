@@ -191,8 +191,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                     $countInsertados++;
                 
             endforeach;
-            $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, " $countActualizados Usuarios de planilla actualizados", 'Éxito');
-            $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, " $countInsertados Usuarios de planilla insertados", 'Éxito');
+            $this->conexionpdoPostgresProducctionSCPv2_tbl_log($fechaActual, " $countActualizados Usuarios de planilla actualizados", 'Éxito');
+            $this->conexionpdoPostgresProducctionSCPv2_tbl_log($fechaActual, " $countInsertados Usuarios de planilla insertados", 'Éxito');
         } catch (PDOException $e) {
             echo  $e->getMessage();
         }
@@ -385,8 +385,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
            echo($countUserHActualizados)."\n";
            echo($countUserHInsertados)."\n"; */
            
-           $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, "$countUserHActualizados Usuarios de RXH actualizados", 'Éxito');
-           $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, "$countUserHInsertados Usuarios de RXH insertados", 'Éxito');
+           $this->conexionpdoPostgresProducctionSCPv2_tbl_log($fechaActual, "$countUserHActualizados Usuarios de RXH actualizados", 'Éxito');
+           $this->conexionpdoPostgresProducctionSCPv2_tbl_log($fechaActual, "$countUserHInsertados Usuarios de RXH insertados", 'Éxito');
        } catch (PDOException $e) {
            echo  $e->getMessage();
        }
