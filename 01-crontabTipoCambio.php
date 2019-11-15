@@ -47,11 +47,11 @@ class getdataFlowdesk extends conexioSQL
                         'valorventa' => $row["tipocambio_emision"]
                     ));
                 }
-              return  $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, 'tipodeCambio', 'Éxito');
+              return  $this->conexionpdoPostgresProducctionSCPv2_tbl_log($fechaActual, 'tipodeCambio', 'Éxito');
 
             } else {
 
-              return  $this->conexionpdoPostgresTestSCPv2_tbl_log($fechaActual, 'tipodeCambio', 'No se encontro data');
+              return  $this->conexionpdoPostgresProducctionSCPv2_tbl_log($fechaActual, 'tipodeCambio', 'No se encontro data');
             }
         } catch (PDOException $e) {
             echo  $e->getMessage();
