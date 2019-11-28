@@ -19,6 +19,22 @@ class conexioSQL
         }
     }
 
+    //? FLOWDESK-ETLInf
+    public function conexionpdoSQLETLInf()
+    {
+
+        try {
+
+            //$conn = new PDO("sqlsrv:Server=$server_name;Database=$db_name;ConnectionPooling=0", "", "");
+            $conn = new PDO("sqlsrv:Server=192.168.1.6;Database=ETLInf", "scpdemo", "scpdemo19$1");
+            //$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            return  $conn;
+        } catch (PDOException $e) {
+
+            echo $e->getMessage();
+        }
+    }
+
     //* SCPv2
 
     // Conexion  a BD de produccion SCPV2
@@ -165,6 +181,24 @@ class conexioSQL
             $conn = new PDO("pgsql:host=127.0.0.1;dbname=scpv3", "postgres", $passbd);
 
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $conn;
+        } catch (PDOException $e) {
+            echo  $e->getMessage();
+        }
+    }
+
+
+    //* DWHAnddes
+
+    public function conexionpdoPostgresProductionDWHAnddes()
+    {
+
+        try {
+
+            $passbd =  "dbProduction2020";
+            $conn = new PDO("pgsql:host=192.168.1.186;dbname=DWHAnddes", "postgres", $passbd);
+           // $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
             return $conn;
         } catch (PDOException $e) {
             echo  $e->getMessage();
