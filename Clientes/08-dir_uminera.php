@@ -25,7 +25,7 @@ class getdata_scpv2UM_scpv3 extends conexioSQL
 
     public function getDataExistsUMineraindirUM($idum)
     {
-        $query = "SELECT * FROM scliente.tdirum where t_unidadminera_idum = $idum ";
+        $query = "SELECT * FROM scliente.t_dirum where t_unidadminera_idum = $idum ";
         $stmt = $this->conexionpdoPostgresLocalSCPv3()->query($query);
         $row_count = $stmt->rowCount();
         $res = ($row_count > 0) ? 'data' : 'sin_data';
@@ -42,14 +42,14 @@ class getdata_scpv2UM_scpv3 extends conexioSQL
         $cont1 = 0;
 
 
-        $data_insertada = $conexionSCPv3->prepare("INSERT INTO scliente.tdirum (t_direcciones_iddir,
+        $data_insertada = $conexionSCPv3->prepare("INSERT INTO scliente.t_dirum (t_direcciones_iddir,
                                                                                  t_unidadminera_idum
                                                                                  ) VALUES (
                                                                                 :t_direcciones_iddir,
                                                                                 :t_unidadminera_idum
                                                                                  )");
 
-        $data_actualizada = $conexionSCPv3->prepare("UPDATE scliente.tdirum  SET 
+        $data_actualizada = $conexionSCPv3->prepare("UPDATE scliente.t_dirum  SET 
                                                                     t_direcciones_iddir         = :t_direcciones_iddir,
                                                                     t_unidadminera_idum        = :t_unidadminera_idum
                                                                     WHERE  t_unidadminera_idum  = :t_unidadminera_idum

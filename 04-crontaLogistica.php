@@ -24,8 +24,8 @@ class getdataFlowdesk extends conexioSQL
     {
         $listArrayproveedores = $this->CapturarDataProveedoresOC();
         $pdo_conexion = $this->conexionpdoPostgresProductionDWHAnddes();
-        $result_set_insert = $pdo_conexion->prepare("INSERT INTO slogistica.tproveedoresoc(ruc,razon_social,critico,condicion_contribuyente,estado_contribuyente,rubro,cargo,nombre,email,telefono,departamento,provincia,proyectos) 
-            VALUES (:ruc,:razon_social,:critico,:condicion_contribuyente,:estado_contribuyente,:rubro,:cargo,:nombre,:email,:telefono,:departamento,:provincia,:proyectos )");
+        $result_set_insert = $pdo_conexion->prepare("INSERT INTO slogistica.tproveedoresoc(ruc,razon_social,critico,condicion_contribuyente,estado_contribuyente,rubro,cargo,nombre,email,telefono,departamento,provincia,distrito,direccion,proyectos) 
+            VALUES (:ruc,:razon_social,:critico,:condicion_contribuyente,:estado_contribuyente,:rubro,:cargo,:nombre,:email,:telefono,:departamento,:provincia,:distrito,:direccion,:proyectos )");
 
     foreach ($listArrayproveedores as $row):
         $result_set_insert->execute(array(
@@ -41,6 +41,8 @@ class getdataFlowdesk extends conexioSQL
                 'telefono'                  => $row["TELEFONO"],
                 'departamento'              => $row["DEPARTAMENTO"],
                 'provincia'                 => $row["PROVINCIA"],
+                'distrito'                 => $row["DISTRITO"],
+                'direccion'                 => $row["DIRECCION"],
                 'proyectos'                 => $row["PROYECTO"]
         ));
     endforeach;      
@@ -109,8 +111,8 @@ class getdataFlowdesk extends conexioSQL
      {
          $listArrayproveedoresOS = $this->CapturarDataProveedoresOS();
          $pdo_conexion = $this->conexionpdoPostgresProductionDWHAnddes();
-         $result_set_insert = $pdo_conexion->prepare("INSERT INTO slogistica.tproveedoresos (ruc,razon_social,critico,condicion_contribuyente,estado_contribuyente,rubro,cargo,nombre,email,telefono,departamento,provincia,proyectos) 
-             VALUES (:ruc,:razon_social,:critico,:condicion_contribuyente,:estado_contribuyente,:rubro,:cargo,:nombre,:email,:telefono,:departamento,:provincia,:proyectos )");
+         $result_set_insert = $pdo_conexion->prepare("INSERT INTO slogistica.tproveedoresos (ruc,razon_social,critico,condicion_contribuyente,estado_contribuyente,rubro,cargo,nombre,email,telefono,departamento,provincia,distrito,direccion,proyectos) 
+             VALUES (:ruc,:razon_social,:critico,:condicion_contribuyente,:estado_contribuyente,:rubro,:cargo,:nombre,:email,:telefono,:departamento,:provincia,:distrito,:direccion,:proyectos )");
  
         foreach ($listArrayproveedoresOS as $row):
             $result_set_insert->execute(array(
@@ -126,6 +128,8 @@ class getdataFlowdesk extends conexioSQL
                     'telefono'                  => $row["TELEFONO"],
                     'departamento'              => $row["DEPARTAMENTO"],
                     'provincia'                 => $row["PROVINCIA"],
+                    'distrito'                 => $row["DISTRITO"],
+                    'direccion'                 => $row["DIRECCION"],
                     'proyectos'                 => $row["PROYECTO"]
             ));
         endforeach;      

@@ -28,7 +28,7 @@ class getdata_scpv2UM_scpv3 extends conexioSQL
 
     public function getDataExistsClienteinClidir($idCliente)
     {
-        $query = "SELECT * FROM scliente.tclidir where t_cliente_idcliente = $idCliente ";
+        $query = "SELECT * FROM scliente.t_clidir where t_cliente_idcliente = $idCliente ";
         $stmt = $this->conexionpdoPostgresLocalSCPv3()->query($query);
         $row_count = $stmt->rowCount();
         $res = ($row_count > 0) ? 'data' : 'sin_data';
@@ -45,14 +45,14 @@ class getdata_scpv2UM_scpv3 extends conexioSQL
         $cont1 = 0;
 
 
-        $data_insertada = $conexionSCPv3->prepare("INSERT INTO scliente.tclidir (t_direcciones_iddir,
+        $data_insertada = $conexionSCPv3->prepare("INSERT INTO scliente.t_clidir (t_direcciones_iddir,
                                                                                  t_cliente_idcliente
                                                                                  ) VALUES (
                                                                                 :t_direcciones_iddir,
                                                                                 :t_cliente_idcliente
                                                                                  )");
 
-        $data_actualizada = $conexionSCPv3->prepare("UPDATE scliente.tclidir  SET 
+        $data_actualizada = $conexionSCPv3->prepare("UPDATE scliente.t_clidir  SET 
                                                                     t_direcciones_iddir         = :t_direcciones_iddir,
                                                                     t_cliente_idcliente        = :t_cliente_idcliente
                                                                     WHERE  t_cliente_idcliente  = :t_cliente_idcliente
