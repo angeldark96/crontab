@@ -47,5 +47,9 @@ INSERT INTO sproyecto.t_serviciosproyectos (nombreservicios,idportafolioproyecto
 
 ALTER TABLE sproyecto.t_m_rolesproyectos ADD COLUMN codmigrarol integer;
 ALTER TABLE sproyecto.t_proyectos ADD COLUMN codmigraproy varchar(30);
+--Eliminar la 
+ALTER TABLE sproyecto.t_proyectos ALTER COLUMN codproy TYPE varchar(16) USING codproy::varchar;
+
+
 
 

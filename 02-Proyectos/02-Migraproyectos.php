@@ -85,7 +85,25 @@ class getdata_scpv2_scpv3 extends conexioSQL
                                                                     idserviciosproyecto = :idserviciosproyecto */
                                                                     codmigraproy        = :codmigraproy
                                                                     WHERE  codmigraproy= :codmigraproy
-                                                   ");                                                             
+                                                   ");
+        $data_insert_estado_proyectos = $conexionSCPv3->prepare("INSERT INTO sproyecto.t_proyectosestado (
+                                                                                fecha,
+                                                                                idproyecto,
+                                                                                idestadosproyecto
+                                                                                ) VALUES (
+                                                                            :fecha,
+                                                                            :idproyecto,
+                                                                            :idestadosproyecto
+                                                                        )");
+
+         $data_actualizar_estado_proyectos  =  $conexionSCPv3->prepare("UPDATE sproyecto.t_proyectosestado  SET
+                                                                        fecha         = :fecha,
+                                                                        idproyecto         = :idproyecto,
+                                                                        idestadosproyecto         = :idestadosproyecto
+                                                                        WHERE  idproyecto= :idproyecto
+                                                                ");   
+    $date = new DateTime("now", new DateTimeZone('America/Lima') );
+    $fechaActual =  $date->format('Y-m-d H:i:s');                                                                                                                                                                                                                          
 
         foreach($datascpv2 as $scpv2):
             foreach($datascpv3 as $scpv3):
@@ -98,11 +116,17 @@ class getdata_scpv2_scpv3 extends conexioSQL
                     'generaingreso'=> $scpv2["generaingreso"] == 'Si'? 0 : 1, 
                     'idserviciosproyecto'=> $this->tipoServicio($scpv2['ctipoproyecto']),
                     'fechacreacion'=> $scpv2["fproyecto"],
-                   /*  
-                    'idserviciosproyecto'=> $scpv2["descripcionrol"],   */
                     'codmigraproy'=> $scpv2["cproyecto"]
                     //'nomcarg' => 'Cargo' // No puede insertarse la data por que el tamaño es 30 (limitado)
                 ));
+
+                $data_actualizar_estado_proyectos->execute(
+                    array(
+                        'fecha' => $fechaActual,
+                        'idproyecto' =>    $scpv3['idproyecto'],
+                        'idestadosproyecto'  => $this->pkaestadoProyecto($scpv2['cestadoproyecto'])
+                    )
+                );
                     continue 2;
                 }
             endforeach; 
@@ -116,8 +140,16 @@ class getdata_scpv2_scpv3 extends conexioSQL
                     'idserviciosproyecto'=>$this->tipoServicio($scpv2['ctipoproyecto']),
                     'codmigraproy'=> $scpv2["cproyecto"]
                    //'nomcarg' =>'Cargo'
-                ));
-                   
+            ));
+
+                $lastInsertId = $conexionSCPv3->lastInsertId();
+                $data_insert_estado_proyectos->execute(
+                    array(
+                        'fecha' => $fechaActual,
+                        'idproyecto' =>    $lastInsertId,
+                        'idestadosproyecto'  => $scpv2["cestadoproyecto"],
+                    )
+                );
             $cont1++; 
         endforeach;    
         echo($cont1.' '.'Proyectos insertados')."\n";
@@ -202,6 +234,30 @@ class getdata_scpv2_scpv3 extends conexioSQL
         //print_r($capurarservicio);
         return $capurarservicio ? $capurarservicio[0] : null;
     }
+
+    public function actualizar_estadoProyecto($cproyecto)
+    {
+        $query_estadoactual = "select tp.cproyecto,tp.cestadoproyecto from tproyecto tp
+        left join testadoproyecto tep on tp.cestadoproyecto = tep.cestadoproyecto 
+        where cproyecto = $cproyecto;";
+        $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query_estadoactual);
+        $stmt->execute(); 
+        $data = $stmt->fetch();
+        return $data['cestadoproyecto'];
+        //print_r($data['cestadoproyecto']);
+    }
+
+    public function pkaestadoProyecto($codestado)
+    {
+        $query_pk_estado = "SELECT idestadosproyecto FROM sproyecto.t_estadosproyectos WHERE codmigraestado = '$codestado'";
+        $estado = $this->conexionpdoPostgresLocalSCPv3()->prepare($query_pk_estado);
+        $estado->execute();
+        $capurarestado = $estado->fetch();
+        //$ola = $capurarservicio ? $capurarservicio : null;
+        //print_r($capurarestado['idestadosproyecto']);
+
+        return $capurarestado ? $capurarestado['idestadosproyecto'] : null;
+    }
 }
 
 $data = new getdata_scpv2_scpv3();
@@ -209,6 +265,6 @@ $data = new getdata_scpv2_scpv3();
 $data->getDataActualizaroRegistrar();
 //$data->getDataActualizaroRegistrar();
 
-//$data->tipoServicio(null);
+//$data->pkaestadoProyecto('001');
 
 
