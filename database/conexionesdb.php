@@ -167,7 +167,7 @@ class conexioSQL
         }
     }
 
-    //  Conexion BD de SCPV3 Produccion
+    //  Conexion BD de SCPV3 Produccion-
 
     public function conexionpdoPostgresProductionSCPv3()
     {
