@@ -448,7 +448,6 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
 
         $tpersonaListadataadicional_update = $pdoupdate_insert->prepare("UPDATE tpersonadatosempleado SET cpersona = :cpersona,
-                                                                                                          carea  = :carea,
                                                                                                           estado   = :estado,
                                                                                                           ctipocontrato = :ctipocontrato,
                                                                                                           email = :email,
@@ -490,12 +489,10 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                 ));
                 $tpersonaListadataadicional_update->execute(array(
                     'cpersona' => $this->capturarCPersona($row["documento_empleado"]),
-                    'carea'     => $this->capturarCentrodeCostoSCP($this->capturarCentrodeCosto($row["documento_empleado"])),
                     'estado'    =>   'INA',
                     'ctipocontrato'    => $this->capturarTipoContrato($row["id_tipo_contrato"]),
                     'email'  => $row["email"],
                     'email_laboral'  => $row["email_laboral"]
-
                 ));
                 $tpersonaListadataadicionalinforbasica_update->execute(array(
                     'cpersona' => $this->capturarCPersona($row["documento_empleado"]),
@@ -624,14 +621,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
         return trim($codigo_sig_fd['codigo_sig']);
     }
 
-    public function capturarCentrodeCostoSCP($codigo_sig)
+   /*  public function capturarCentrodeCostoSCP($codigo_sig)
     {
         $query = "SELECT carea FROM tareas WHERE codigo_sig = '$codigo_sig'";
         $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetch();
         return $data['carea'];
-    }
+    } */
 
     public function capturarTipoContrato($codigo)
 
