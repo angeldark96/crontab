@@ -10,7 +10,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function dataUsuariosFlowdesk()
     {
         // Data del flowdesk empleado a actualizar 
-        $queryuser_fd = "select DISTINCT(LTRIM(RTRIM(emp.documento_empleado)))  as documento_empleado,tus.id,emp.ape_paterno_empl, emp.ape_materno_empl,emp.nombre,emp.sexo_empl,id_estado_civil,
+        $queryuser_fd = "select DISTINCT(LTRIM(RTRIM(emp.documento_empleado)))  as documento_empleado,tus.id,emp.id pk_fd,emp.ape_paterno_empl, emp.ape_materno_empl,emp.nombre,emp.sexo_empl,id_estado_civil,
         emp.email, emp.email_laboral,max(conn.id) as ultimocontrato,conn.fecha_fin_prog ,conn.id_tipo_contrato,conn.fecha_inicio,emp.id_nacionalidad_empl,tus.nombre as abreviatura
        from empleado emp
        left join (select * from rh_contrato con where con.fecha_fin_prog is null or con.fecha_fin_prog >= getdate()) conn on emp.id = conn.id_empleado
@@ -42,7 +42,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                       identificacion = :identificacion,
                                                                       ctipopersona = :ctipopersona,
                                                                       abreviatura =:abreviatura,
-                                                                      ctipoidentificacion = :ctipoidentificacion
+                                                                      ctipoidentificacion = :ctipoidentificacion,
+                                                                      pk_fd = :pk_fd
                                                                       WHERE identificacion = :identificacion ");
 
 
@@ -90,8 +91,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
 
 
-        $result_set_insert = $pdoupdate_insert->prepare("INSERT INTO tpersona (nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion) 
-                                                                            VALUES (:nombre,:identificacion,:ctipopersona,:abreviatura,:ctipoidentificacion)");
+        $result_set_insert = $pdoupdate_insert->prepare("INSERT INTO tpersona (nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion,pk_fd) 
+                                                                            VALUES (:nombre,:identificacion,:ctipopersona,:abreviatura,:ctipoidentificacion,:pk_fd)");
 
         $tpersonaListadataadicional = $pdoupdate_insert->prepare("INSERT INTO tpersonadatosempleado (cpersona,estado,ctipocontrato,email,email_laboral) 
                                                                             VALUES (:cpersona,:estado,:ctipocontrato,:email,:email_laboral)");
@@ -114,7 +115,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                         'ctipopersona'        => 'NAT',
                         'ctipoidentificacion' => 2,
                         'abreviatura' => $row["abreviatura"],
-                        'identificacion' => $row["documento_empleado"]
+                        'identificacion' => $row["documento_empleado"],
+                        'pk_fd' => $row["pk_fd"]
                     ));
 
                     $tpersonaListadataadicional_update->execute(array(
@@ -155,7 +157,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                         'identificacion'      => $row["documento_empleado"],
                         'ctipopersona'        => 'NAT',
                         'abreviatura' =>  $row["abreviatura"],
-                        'ctipoidentificacion' => 2
+                        'ctipoidentificacion' => 2,
+                        'pk_fd' => $row["pk_fd"]
 
 
                     ));
@@ -201,7 +204,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function dataUsuariosLogistica() {
 
         // Lista de solo usuarios por honorarios en GH
-        $queryuser_fd = "select DISTINCT(LTRIM(RTRIM(emp.documento_empleado)))  as documento_empleado,tus.id,emp.ape_paterno_empl, emp.ape_materno_empl,emp.nombre,emp.sexo_empl,id_estado_civil,
+        $queryuser_fd = "select DISTINCT(LTRIM(RTRIM(emp.documento_empleado)))  as documento_empleado,tus.id,emp.id pk_fd,emp.ape_paterno_empl, emp.ape_materno_empl,emp.nombre,emp.sexo_empl,id_estado_civil,
         emp.email, emp.email_laboral,max(conn.id) as ultimocontrato,conn.fecha_fin_prog ,conn.id_tipo_contrato,conn.fecha_inicio,emp.id_nacionalidad_empl,tus.nombre as abreviatura
        from empleado emp
        left join (select * from rh_contrato con where con.fecha_fin_prog is null or con.fecha_fin_prog >= getdate()) conn on emp.id = conn.id_empleado
@@ -224,7 +227,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                      identificacion = :identificacion,
                                                                      ctipopersona = :ctipopersona,
                                                                      abreviatura =:abreviatura,
-                                                                     ctipoidentificacion = :ctipoidentificacion
+                                                                     ctipoidentificacion = :ctipoidentificacion,
+                                                                     pk_fd = :pk_fd
                                                                      WHERE identificacion = :identificacion ");
 
 
@@ -258,8 +262,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
 
 
 
-       $result_set_insert = $pdoupdate_insert->prepare("INSERT INTO tpersona (nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion) 
-                                                                           VALUES (:nombre,:identificacion,:ctipopersona,:abreviatura,:ctipoidentificacion)");
+       $result_set_insert = $pdoupdate_insert->prepare("INSERT INTO tpersona (nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion,pk_fd) 
+                                                                           VALUES (:nombre,:identificacion,:ctipopersona,:abreviatura,:ctipoidentificacion,:pk_fd)");
 
        $tpersonaListadataadicional = $pdoupdate_insert->prepare("INSERT INTO tpersonadatosempleado (cpersona,estado,ctipocontrato,email,email_laboral) 
                                                                            VALUES (:cpersona,:estado,:ctipocontrato,:email,:email_laboral)");
@@ -287,7 +291,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                             'ctipopersona'           => 'NAT',
                             'ctipoidentificacion'    => 2,
                             'abreviatura'            => $rowl["abreviatura"],
-                            'identificacion'         => $rowl["documento_empleado"]
+                            'identificacion'         => $rowl["documento_empleado"],
+                            'pk_fd' => $row["pk_fd"]
                         ));
 
                         $tpersonaListadataadicional_update->execute(array(
@@ -320,7 +325,8 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                             'identificacion'      => $rowl["documento_empleado"],
                             'ctipopersona'        => 'NAT',
                             'abreviatura' =>  $rowl["abreviatura"],
-                            'ctipoidentificacion' => 2
+                            'ctipoidentificacion' => 2,
+                            'pk_fd' => $row["pk_fd"]
                         ));
                         //nombre,identificacion,ctipopersona,abreviatura,ctipoidentificacion   
                         $lastInsertId = $pdoupdate_insert->lastInsertId();
@@ -397,7 +403,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
     public function actualizarusuariosCesados()
     {
         // Data del flowdesk empleado a actualizar 
-        $queryuser_fd = " SELECT DISTINCT e.id,LTRIM(RTRIM(e.documento_empleado)) as documento_empleado ,e.nombre,e.ape_paterno_empl,e.ape_materno_empl,e.email,e.email_laboral,us.nombre as abreviatura,e.id_nacionalidad_empl,
+        $queryuser_fd = " SELECT DISTINCT e.id,LTRIM(RTRIM(e.documento_empleado)) as documento_empleado ,e.id pk_fd,e.nombre,e.ape_paterno_empl,e.ape_materno_empl,e.email,e.email_laboral,us.nombre as abreviatura,e.id_nacionalidad_empl,
         (SELECT MAX(rh_c.id) FROM rh_contrato as rh_c where e.id = rh_c.id_empleado)  as ultimocontrato ,
         (SELECT MAX(rh_c.id_tipo_contrato) FROM rh_contrato as rh_c where e.id = rh_c.id_empleado)  as id_tipo_contrato ,
         --(SELECT max(sub.codigo) FROM rh_contrato as rh_cd where rh_cd.id = (SELECT MAX(rh_c.id) FROM rh_contrato as rh_c where e.id = rh_c.id_empleado))  as codigocentroCosto ,
@@ -409,7 +415,7 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
         --where LTRIM(RTRIM(e.documento_empleado)) = '142051476'
         where e.id not in 
         (
-        565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581,582,583,584,585,586,587,588,589,590,591,592,593,596,608,609,610,611,612,613,614,615,616,617,618,619,620,621,622
+        565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581,583,584,585,586,587,588,589,590,591,592,593,596,608,609,610,611,612,613,614,616,617,618,619,620,621,622
         ) and 
         (SELECT MAX(rh_cfc.fecha_fin_prog) FROM rh_contrato as rh_cfc where rh_cfc.id =  (SELECT MAX(rh_c.id) FROM rh_contrato as rh_c where e.id = rh_c.id_empleado) ) is not null 
         and (SELECT MAX(rh_cfc.fecha_fin_prog) FROM rh_contrato as rh_cfc where rh_cfc.id =  (SELECT MAX(rh_c.id) FROM rh_contrato as rh_c where e.id = rh_c.id_empleado)) <= GETDATE() 
@@ -436,12 +442,12 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                       identificacion = :identificacion,
                                                                       ctipopersona = :ctipopersona,
                                                                       abreviatura =:abreviatura,
-                                                                      ctipoidentificacion = :ctipoidentificacion
+                                                                      ctipoidentificacion = :ctipoidentificacion,
+                                                                      pk_fd = :pk_fd
                                                                       WHERE identificacion = :identificacion ");
 
 
         $tpersonaListadataadicional_update = $pdoupdate_insert->prepare("UPDATE tpersonadatosempleado SET cpersona = :cpersona,
-                                                                                                          --carea  = :carea,
                                                                                                           estado   = :estado,
                                                                                                           ctipocontrato = :ctipocontrato,
                                                                                                           email = :email,
@@ -469,11 +475,6 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                                                                                                             where tp.cpersona = :cpersona
                                                                                                             ) AS subquery 
                                                                                                             WHERE tpersonanaturalinformacionbasica.cpersona=subquery.cpersona");
-
-
-
-
-
         foreach ($userfd as $row) :
             if (in_array(intval($row["documento_empleado"]), $listArrayscp)) {
 
@@ -483,16 +484,15 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
                     'ctipopersona'        => 'NAT',
                     'ctipoidentificacion' => 2,
                     'abreviatura' => $row["abreviatura"],
-                    'identificacion' => $row["documento_empleado"]
+                    'identificacion' => $row["documento_empleado"],
+                    'pk_fd'  => $row["pk_fd"]
                 ));
                 $tpersonaListadataadicional_update->execute(array(
                     'cpersona' => $this->capturarCPersona($row["documento_empleado"]),
-                    //'carea'     => $this->capturarCentrodeCostoSCP($this->capturarCentrodeCosto($row["documento_empleado"])),
                     'estado'    =>   'INA',
                     'ctipocontrato'    => $this->capturarTipoContrato($row["id_tipo_contrato"]),
                     'email'  => $row["email"],
                     'email_laboral'  => $row["email_laboral"]
-
                 ));
                 $tpersonaListadataadicionalinforbasica_update->execute(array(
                     'cpersona' => $this->capturarCPersona($row["documento_empleado"]),
@@ -621,14 +621,14 @@ class obtenerDataUsuariosFlowdesk extends conexioSQL
         return trim($codigo_sig_fd['codigo_sig']);
     }
 
-    public function capturarCentrodeCostoSCP($codigo_sig)
+   /*  public function capturarCentrodeCostoSCP($codigo_sig)
     {
         $query = "SELECT carea FROM tareas WHERE codigo_sig = '$codigo_sig'";
         $stmt = $this->conexionpdoPostgresProductionSCPv2()->prepare($query);
         $stmt->execute();
         $data = $stmt->fetch();
         return $data['carea'];
-    }
+    } */
 
     public function capturarTipoContrato($codigo)
 
