@@ -38,6 +38,25 @@ class conexioSQL
         }
     }
 
+    public function conexionpdoPostgresProducctionSCPv2_tbl_log($fecharegistro, $nombrefuncion, $description)
+    {
+
+        try {
+            $passbd =  "dbProduction2020";
+            $conn = new PDO("pgsql:host=192.168.1.186;dbname=db_scp", "postgres", $passbd);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $result_set = $conn->prepare("INSERT INTO iemigracion.tbl_log (fecharegistro,nombrefuncion,description) VALUES (:fecharegistro,:nombrefuncion,:description)");
+            $result_set->bindValue(':fecharegistro', $fecharegistro);
+            $result_set->bindValue(':nombrefuncion', $nombrefuncion);
+            $result_set->bindValue(':description',  $description);
+            $result_set->execute();
+
+            return  $conn;
+        } catch (PDOException $e) {
+            echo  $e->getMessage();
+        }
+    }
+
     // Conexion BD de test QA -SCPV2
 
     public function conexionpdoPostgresTestSCPv2()
