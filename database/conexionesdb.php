@@ -100,7 +100,7 @@ class conexioSQL
         try {
 
             $passbd =  "postgres";
-            $conn = new PDO("pgsql:host=127.0.0.1;dbname=dberpProyectos", "postgres", $passbd);
+            $conn = new PDO("pgsql:host=127.0.0.1;dbname=db_scp", "postgres", $passbd);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $conn;
         } catch (PDOException $e) {
@@ -137,8 +137,12 @@ class conexioSQL
     {
 
         try {
-            $passbd =  "postgres";
-            $conn = new PDO("pgsql:host=127.0.0.1;dbname=scpv3", "postgres", $passbd);
+          /*   $passbd =  "postgres";
+            $conn = new PDO("pgsql:host=127.0.0.1;dbname=db_holistics_pro", "postgres", $passbd); */
+
+            $passbd =  "dbProduction2020";
+            //$conn = new PDO("pgsql:host=192.168.1.186;dbname=db_holistics_preprod", "postgres", $passbd);
+            $conn = new PDO("pgsql:host=192.168.1.186;dbname=db_holistics_prod", "postgres", $passbd);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $conn;
         } catch (PDOException $e) {
@@ -169,16 +173,17 @@ class conexioSQL
 
     //  Conexion BD de SCPV3 Produccion-
 
-    public function conexionpdoPostgresProductionSCPv3()
+    public function conexionpdoPostgresProductionHolistics()
     {
 
         try {
             // Conexion a migrar
-            /*  $passbd =  "prueba$2019db";
-               $conn = new PDO("pgsql:host=192.168.50.95;dbname=db_scp", "postgres", $passbd); */
-            // Conexion para hacer pruebas 
-            $passbd =  "postgres";
-            $conn = new PDO("pgsql:host=127.0.0.1;dbname=scpv3", "postgres", $passbd);
+            /*  $passbd =  "dbProduction2020";
+             $conn = new PDO("pgsql:host=192.168.1.186;dbname=db_holistics_prod", "postgres", $passbd); */
+
+               $passbd =  "postgres";
+            $conn = new PDO("pgsql:host=127.0.0.1;dbname=db_holistics_pro", "postgres", $passbd);
+          
 
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $conn;
@@ -198,6 +203,20 @@ class conexioSQL
             $passbd =  "dbProduction2020";
             $conn = new PDO("pgsql:host=192.168.1.186;dbname=DWHAnddes", "postgres", $passbd);
            // $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            return $conn;
+        } catch (PDOException $e) {
+            echo  $e->getMessage();
+        }
+    }
+
+    public function conexionpdoLocalComercialExcel()
+    {
+
+        try {
+
+            $passbd =  "postgres";
+            $conn = new PDO("pgsql:host=127.0.0.1;dbname=bd_dataexcel", "postgres", $passbd);
 
             return $conn;
         } catch (PDOException $e) {
